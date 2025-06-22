@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoBank - Banking Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+        }
+
+        .nav-tab.active {
+            background: white;
+            border-bottom-color: #007bff;
+            color: #007bff;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,123,255,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 4px solid #007bff;
+        }
+
+        .card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .balance-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #28a745;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.3s ease;
+        }
+
+        .transaction-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-type {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .transaction-type.deposit {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .transaction-type.withdrawal {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .transaction-type.transfer {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .account-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .account-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .account-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            transition: all 0.5s ease;
+        }
+
+        .account-card:hover::before {
+            top: -25%;
+            right: -25%;
+        }
+
+        .account-number {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .account-balance {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .account-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏦 AutoBank</h1>
+            <p>Your Complete Banking Solution</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('dashboard')">Dashboard</button>
+            <button class="nav-tab" onclick="showTab('create-account')">Create Account</button>
+            <button class="nav-tab" onclick="showTab('transactions')">Transactions</button>
+            <button class="nav-tab" onclick="showTab('transfer')">Transfer</button>
+            <button class="nav-tab" onclick="showTab('history')">History</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="card">
+                <h3>Account Overview</h3>
+                <div id="accountsList" class="account-list">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading accounts...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Account Tab -->
+        <div id="create-account" class="tab-content">
+            <div class="card">
+                <h3>Create New Account</h3>
+                <form id="createAccountForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="accountHolderName">Full Name</label>
+                            <input type="text" id="accountHolderName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="accountType">Account Type</label>
+                            <select id="accountType" required>
+                                <option value="">Select Account Type</option>
+                                <option value="SAVINGS">Savings Account</option>
+                                <option value="CHECKING">Checking Account</option>
+                                <option value="BUSINESS">Business Account</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="initialDeposit">Initial Deposit ($)</label>
+                            <input type="number" id="initialDeposit" min="100" step="0.01" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Create Account</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Transactions Tab -->
+        <div id="transactions" class="tab-content">
+            <div class="form-row">
+                <div class="card">
+                    <h3>💰 Deposit Money</h3>
+                    <form id="depositForm">
+                        <div class="form-group">
+                            <label for="depositAccount">Account Number</label>
+                            <input type="text" id="depositAccount" placeholder="ACC123456789" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="depositAmount">Amount ($)</label>
+                            <input type="number" id="depositAmount" min="1" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="depositDescription">Description</label>
+                            <input type="text" id="depositDescription" placeholder="Optional description">
+                        </div>
+                        <button type="submit" class="btn btn-success">Deposit</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>💸 Withdraw Money</h3>
+                    <form id="withdrawForm">
+                        <div class="form-group">
+                            <label for="withdrawAccount">Account Number</label>
+                            <input type="text" id="withdrawAccount" placeholder="ACC123456789" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="withdrawAmount">Amount ($)</label>
+                            <input type="number" id="withdrawAmount" min="1" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="withdrawDescription">Description</label>
+                            <input type="text" id="withdrawDescription" placeholder="Optional description">
+                        </div>
+                        <button type="submit" class="btn btn-warning">Withdraw</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transfer Tab -->
+        <div id="transfer" class="tab-content">
+            <div class="card">
+                <h3>🔄 Transfer Money</h3>
+                <form id="transferForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fromAccount">From Account</label>
+                            <input type="text" id="fromAccount" placeholder="ACC123456789" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="toAccount">To Account</label>
+                            <input type="text" id="toAccount" placeholder="ACC987654321" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="transferAmount">Amount ($)</label>
+                            <input type="number" id="transferAmount" min="1" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="transferDescription">Description</label>
+                            <input type="text" id="transferDescription" placeholder="Optional description">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Transfer Money</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history" class="tab-content">
+            <div class="card">
+                <h3>📊 Transaction History</h3>
+                <div class="form-group">
+                    <label for="historyAccount">Account Number</label>
+                    <input type="text" id="historyAccount" placeholder="ACC123456789">
+                    <button onclick="loadTransactionHistory()" class="btn" style="margin-top: 10px;">Load History</button>
+                </div>
+                <div id="transactionHistory">
+                    <p>Enter an account number to view transaction history.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+        
+        // Tab functionality
+        function showTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Add active class to clicked nav tab
+            event.target.classList.add('active');
+            
+            // Load data for specific tabs
+            if (tabId === 'dashboard') {
+                loadAccounts();
+            }
+        }
+
+        // Load all accounts for dashboard
+        async function loadAccounts() {
+            try {
+                const response = await fetch(`${API_BASE}/accounts`);
+                const accounts = await response.json();
+                
+                const accountsList = document.getElementById('accountsList');
+                
+                if (accounts.length === 0) {
+                    accountsList.innerHTML = '<p>No accounts found. Create your first account!</p>';
+                    return;
+                }
+                
+                accountsList.innerHTML = accounts.map(account => `
+                    <div class="account-card">
+                        <div class="account-number">${account.accountNumber}</div>
+                        <div><strong>${account.accountHolderName}</strong></div>
+                        <div>${account.email}</div>
+                        <div>${account.accountType} Account</div>
+                        <div class="account-balance">$${parseFloat(account.balance).toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading accounts:', error);
+                document.getElementById('accountsList').innerHTML = 
+                    '<div class="alert alert-error">Error loading accounts. Please check if the server is running.</div>';
+            }
+        }
+
+        // Create account form handler
+        document.getElementById('createAccountForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('accountHolderName').value,
+                email: document.getElementById('email').value,
+                accountType: document.getElementById('accountType').value,
+                initialDeposit: parseFloat(document.getElementById('initialDeposit').value)
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/accounts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.accountNumber) {
+                    showAlert('success', `Account created successfully! Account Number: ${result.accountNumber}`);
+                    document.getElementById('createAccountForm').reset();
+                    loadAccounts(); // Refresh dashboard
+                } else {
+                    showAlert('error', 'Failed to create account. Please try again.');
+                }
+                
+            } catch (error) {
+                console.error('Error creating account:', error);
+                showAlert('error', 'Error creating account. Please check if the server is running.');
+            }
+        });
+
+        // Deposit form handler
+        document.getElementById('depositForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                accountNumber: document.getElementById('depositAccount').value,
+                amount: parseFloat(document.getElementById('depositAmount').value),
+                description: document.getElementById('depositDescription').value || 'Deposit'
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/deposit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('success', `Deposit of $${formData.amount} completed successfully!`);
+                    document.getElementById('depositForm').reset();
+                    loadAccounts(); // Refresh dashboard
+                } else {
+                    showAlert('error', 'Deposit failed. Please check the account number and try again.');
+                }
+                
+            } catch (error) {
+                console.error('Error processing deposit:', error);
+                showAlert('error', 'Error processing deposit. Please try again.');
+            }
+        });
+
+        // Withdraw form handler
+        document.getElementById('withdrawForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                accountNumber: document.getElementById('withdrawAccount').value,
+                amount: parseFloat(document.getElementById('withdrawAmount').value),
+                description: document.getElementById('withdrawDescription').value || 'Withdrawal'
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/withdraw`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('success', `Withdrawal of $${formData.amount} completed successfully!`);
+                    document.getElementById('withdrawForm').reset();
+                    loadAccounts(); // Refresh dashboard
+                } else {
+                    showAlert('error', 'Withdrawal failed. Please check the account number and balance.');
+                }
+                
+            } catch (error) {
+                console.error('Error processing withdrawal:', error);
+                showAlert('error', 'Error processing withdrawal. Please try again.');
+            }
+        });
+
+        // Transfer form handler
+        document.getElementById('transferForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                fromAccount: document.getElementById('fromAccount').value,
+                toAccount: document.getElementById('toAccount').value,
+                amount: parseFloat(document.getElementById('transferAmount').value),
+                description: document.getElementById('transferDescription').value || 'Transfer'
+            };
+            
+            if (formData.fromAccount === formData.toAccount) {
+                showAlert('error', 'Cannot transfer to the same account!');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/transfer`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('success', `Transfer of $${formData.amount} completed successfully!`);
+                    document.getElementById('transferForm').reset();
+                    loadAccounts(); // Refresh dashboard
+                } else {
+                    showAlert('error', 'Transfer failed. Please check account numbers and balance.');
+                }
+                
+            } catch (error) {
+                console.error('Error processing transfer:', error);
+                showAlert('error', 'Error processing transfer. Please try again.');
+            }
+        });
+
+        // Load transaction history
+        async function loadTransactionHistory() {
+            const accountNumber = document.getElementById('historyAccount').value;
+            
+            if (!accountNumber) {
+                showAlert('error', 'Please enter an account number.');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/transactions?accountNumber=${accountNumber}`);
+                const transactions = await response.json();
+                
+                const historyDiv = document.getElementById('transactionHistory');
+                
+                if (transactions.length === 0) {
+                    historyDiv.innerHTML = '<p>No transactions found for this account.</p>';
+                    return;
+                }
+                
+                historyDiv.innerHTML = `
+                    <h4>Transactions for ${accountNumber}</h4>
+                    <div>
+                        ${transactions.map(transaction => `
+                            <div class="transaction-item">
+                                <div>
+                                    <span class="transaction-type ${transaction.transactionType.toLowerCase()}">${transaction.transactionType}</span>
+                                    <div><strong>$${parseFloat(transaction.amount).toLocaleString('en-US', {minimumFractionDigits: 2})}</strong></div>
+                                    <div>${transaction.description}</div>
+                                    <small>${new Date(transaction.transactionDate).toLocaleString()}</small>
+                                </div>
+                                <div>
+                                    ${transaction.fromAccount ? `From: ${transaction.fromAccount}` : ''}
+                                    ${transaction.toAccount ? `To: ${transaction.toAccount}` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Error loading transaction history:', error);
+                showAlert('error', 'Error loading transaction history. Please try again.');
+            }
+        }
+
+        // Utility function to show alerts
+        function showAlert(type, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'error'}`;
+            alertDiv.textContent = message;
+            
+            // Insert at the top of the active tab
+            const activeTab = document.querySelector('.tab-content.active');
+            activeTab.insertBefore(alertDiv, activeTab.firstChild);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        // Load accounts when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAccounts();
+        });
+    </script>
+</body>
+</html>
